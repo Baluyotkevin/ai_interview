@@ -4,11 +4,12 @@ import Image from 'next/image';
 import { Button } from './ui/button';
 import Link from 'next/link';
 import DisplayTechIcons from './DisplayTechIcons';
+import { getFeedbackByInterviewId } from '@/lib/actions/general.action';
 
-const InterviewCard = ({ id, userId, role, type, createdAt, techstack } : InterviewCardProps) => {
-    const feedback = null as Feedback | null;
+const InterviewCard = async ({ id, userId, role, type, createdAt, techstack } : InterviewCardProps) => {
+    const feedback = userId && id ? await getFeedbackByInterviewId({interviewId: id, userId}) : null;
     const normalizedType = /mix/gi.test(type) ? 'Mixed' : type;
-    const formattedDate = dayjs(feedback?.createdAt || createdAt || Date.now()).format('MMM, D, YYYY')
+    const formattedDate = dayjs(feedback?.createdAt || createdAt || Date.now()).format('MMM, D, YYYY');
 
   return (
     <div className="card-border w-[360px] max-sm:w-full min-h-96">
@@ -67,7 +68,7 @@ const InterviewCard = ({ id, userId, role, type, createdAt, techstack } : Interv
             </div>
         </div>
     </div>
-  )
-}
+  );
+};
 
-export default InterviewCard
+export default InterviewCard;
