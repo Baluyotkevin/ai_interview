@@ -1,8 +1,8 @@
 "use client";
 import { interviewer } from '@/constants';
-import { createFeedback } from '@/lib/actions/general.action';
+import { createFeedback, editFeedback } from '@/lib/actions/general.action';
 import { vapi } from '@/lib/vapi.sdk';
-import { cn } from '@/utils';
+import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -12,13 +12,15 @@ enum CallStatus {
   CONNECTING = 'CONNECTING',
   ACTIVE = 'ACTIVE',
   FINISHED = 'FINISHED',
-}
+};
 
 interface SavedMessage {
   role: 'user' | 'system' | 'assistant';
   content: string;
-}
+};
 
+
+// add another prop so that agent knows whether its "Edit" or "Create" then we can switch the butotns
 const Agent = ({ userName, userId, type, interviewId, questions } : AgentProps) => {
   const router = useRouter();
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -76,6 +78,23 @@ const Agent = ({ userName, userId, type, interviewId, questions } : AgentProps) 
         router.push("/");
       }
     };
+
+    const handleEditFeedback = async (messages: SavedMessaged[]) => {
+      console.log("handleEditFeedback");
+
+      const { success, feedbackId: id } = await editFeedback({
+        interviewId: interviewId!,
+        userId: userId!,
+        transcript: messages
+      });
+
+      if (success && id) {
+        router.push(`/interview/${interviewId}/feedback`);
+      } else {
+        console.log("Error saving feedback");
+        router.push("/");
+      }
+    }
 
   useEffect(() => {
     if (callStatus === CallStatus.FINISHED) {

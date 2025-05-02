@@ -32,6 +32,15 @@ interface CreateFeedbackParams {
   feedbackId?: string;
 }
 
+interface EditFeedbackParams {
+  interviewId: string;
+  userId: string;
+  transcript: { role: string; content: string }[];
+  feedbackId?: string;
+}
+
+
+
 interface User {
   name: string;
   email: string;
